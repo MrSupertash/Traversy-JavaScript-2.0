@@ -27,6 +27,8 @@ Create an arrow function called `minMax()` that takes in an array of numbers and
 console.log(minMax([1, 2, 3, 4, 5])); // { min: 1, max: 5 }
 */
 
+// Solution Challenge #2
+
 const minMax = arr => {
     const obj = {
         min: 0,
@@ -47,3 +49,25 @@ const minMax = arr => {
 }
 
 console.log(minMax([1, 23, 3, -4, 5]));
+
+
+/*
+## Challenge 3
+
+Create an IIFE (Immediately Invoked Function Expression) that takes in the length and width of a rectangle outputs it to the console in a message as soon as the page loads.
+
+**Expected Result:**
+
+```JavaScript
+// On page load
+The area of a rectangle with a length of 10 and a width of 5 is 50.
+*/
+
+// Solution Challenge #3
+
+(function () {
+    const length = 12;
+    const width = 23;
+    const area = length * width;
+    console.log(`The area of a rectangle with the length of ${length} and width of ${width} is ${area}.`);
+})()
