@@ -4,6 +4,7 @@
 const itemForm = document.getElementById('item-form');
 const itemInput = document.getElementById('item-input');
 const itemList = document.getElementById('item-list');
+const clearButton = document.getElementById('clear');
 
 // Event functions
 function addItem(e) {
@@ -51,7 +52,22 @@ function createIcon(classes) {
     return icon;
 }
 
+function removeItem(e) {
+    if (e.target.parentElement.classList.contains('remove-item')) {
+        e.target.parentElement.parentElement.remove();
+    }
+}
+
+// I wondered why the console.log would log more often than were li in the list. The children of ul of course also contain whitespace textNodes within the ul tags as well as at least one comment node if I commented out all items in the html. To get rid of this potential issue, it is necessary to have the opening and closing ul tag right next to each other. Otherwise we could potentially target a comment or textNode child that we did not intent to. Will remove this later from the HTML. Will keep it now for building/testing purposes
+function clearItems() {
+    while (itemList.firstChild) {
+        itemList.removeChild(itemList.firstChild);
+        console.log(itemList);
+    }
+}
 
 
 // Event Listeners
 itemForm.addEventListener('submit', addItem);
+itemList.addEventListener('click', removeItem);
+clearButton.addEventListener('click', clearItems);
