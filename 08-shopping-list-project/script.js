@@ -84,8 +84,14 @@ function addItemToStorage(item) {
     localStorage.setItem('items', JSON.stringify(itemsFromStorage));
 }
 
-
 function displayItems() {
+    const itemsFromStorage = getItemsFromStorage();
+    itemsFromStorage.forEach(item => addItemToDom(item));
+    
+    checkUI();
+}
+
+function getItemsFromStorage() {
     let itemsFromStorage;
 
     if(localStorage.getItem('items') === null) {
@@ -96,8 +102,7 @@ function displayItems() {
         itemsFromStorage = JSON.parse(localStorage.getItem('items'));
     }
 
-    itemsFromStorage.forEach(item => addItemToDom(item));
-    checkUI();
+    return itemsFromStorage;
 }
 
 
@@ -142,6 +147,7 @@ function checkUI() {
     }
 }
 
+// initialize app
 function init() {
     // Event Listeners
     itemForm.addEventListener('submit', onAddItemSubmit);
