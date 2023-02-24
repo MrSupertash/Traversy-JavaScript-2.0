@@ -72,6 +72,27 @@ function clearItems() {
     checkUI();
 }
 
+function filterItems(e) {
+    const items = itemList.querySelectorAll('li');
+    const text = e.target.value.toLowerCase();
+    
+    // check if there is something in the filter input
+    // actually we don't need to do that because otherwise the eventlistener wouldn't have fired. It even fires if we delete the last remaining character! Will delete these with the next commit.
+    // if (text) {
+        // we already know that there are items, because otherwise the filter input element is hidden
+        // if any of the items contains the substring from the input field, show it, or if not, don't show it
+        items.forEach(item => {
+            if (!item.textContent.toLowerCase().includes(text)) {
+                item.style.display = 'none';
+            } else {
+                item.style.display = 'flex';
+            }
+        })
+    // } else {
+    //     items.forEach(item => item.style.display = 'flex');
+    // }
+}
+
 function checkUI() {
     const items = itemList.querySelectorAll('li');
     if (items.length === 0) {
@@ -88,6 +109,7 @@ function checkUI() {
 itemForm.addEventListener('submit', addItem);
 itemList.addEventListener('click', removeItem);
 clearButton.addEventListener('click', clearItems);
+itemFilter.addEventListener('input', filterItems);
 
 // Check on page load if there are items, otherwise clear the Clear All button and Filter input
 checkUI();
