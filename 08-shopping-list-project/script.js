@@ -99,30 +99,32 @@ function getItemsFromStorage() {
     return itemsFromStorage;
 }
 
-
-function removeItem(e) {
+function onClickItem(e) {
     if (e.target.parentElement.classList.contains('remove-item')) {
-        const itemName = e.target.parentElement.parentElement.firstChild.textContent;
-        if (confirm(`Sure you wanna delete ${itemName} from the list?`)) {
-            // remove item from DOM
-            e.target.parentElement.parentElement.remove();
-            removeItemFromLocalStorage(itemName);
-        }        
-    };
-    checkUI();
+        removeItem(e.target.parentElement.parentElement);
+    }
+
+
 }
+
+function removeItem(item) {
+    // console.log(item);
+
+    if (confirm(`Sure you wanna delete ${item.textContent}?`)) {
+        // remove item from DOM
+        item.remove();
+        // remove item from local storage
+        removeItemFromLocalStorage(item.textContent);
+    }        
+
+    checkUI();
+};
 
 function removeItemFromLocalStorage(item) {
     const storageItems = getItemsFromStorage();
-    const newStorageItems = [];
-    
-    storageItems.forEach(storageItem => {
-        if (storageItem !== item) {
-            newStorageItems.push(storageItem);
-        };
-    });
+    const newStorageItems = storageItems.filter(storageItem => (storageItem !== item));
 
-    // if no items left, clear local storage, otherwise set updated item list
+    // if no items left, clear local storage key, otherwise set updated item list
     if (newStorageItems.length === 0) {
         localStorage.removeItem('items');
     } else {
@@ -168,7 +170,7 @@ function init() {
 
     // Event Listeners
     itemForm.addEventListener('submit', onAddItemSubmit);
-    itemList.addEventListener('click', removeItem);
+    itemList.addEventListener('click', onClickItem);
     clearButton.addEventListener('click', clearItems);
     itemFilter.addEventListener('input', filterItems);
     document.addEventListener('DOMContentLoaded', displayItems);
