@@ -21,6 +21,22 @@ function onAddItemSubmit(e) {
         return;
     }
 
+    // Check for edit mode
+    if (isEditMode) {
+        const itemToEdit = itemList.querySelector('.edit-mode');
+
+        // remove the item to be edited from local storage
+        removeItemFromLocalStorage(itemToEdit.textContent);
+
+        // remove the edit-mode class
+        itemToEdit.classList.remove('edit-mode');
+
+        // remove it from the DOM
+        itemToEdit.remove();
+
+        isEditMode = 'false';
+    }
+
     // create item DOM element
     addItemToDom(newItem);
 
@@ -123,10 +139,10 @@ function setItemToEdit(item) {
     formButton.innerHTML = '<i class="fa-solid fa-pen"></i> Update Item';
     formButton.style.backgroundColor = '#228B22';
     itemInput.value = item.textContent;
+    itemInput.focus();
 }
 
 function removeItem(item) {
-    // console.log(item);
 
     if (confirm(`Sure you wanna delete ${item.textContent}?`)) {
         // remove item from DOM
@@ -173,6 +189,7 @@ function filterItems(e) {
 }
 
 function checkUI() {
+    itemInput.value = '';
     const items = itemList.querySelectorAll('li');
     if (items.length === 0) {
         clearButton.style.display = 'none';
@@ -181,6 +198,11 @@ function checkUI() {
         clearButton.style.display = 'flex';
         itemFilter.style.display = 'flex';
     }
+
+    formButton.innerHTML = '<i class="fa-solid fa-plus"></i> Add Item';
+    formButton.style.backgroundColor = '#333';
+
+    isEditMode = false;
 }
 
 // initialize app
