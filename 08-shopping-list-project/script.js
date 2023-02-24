@@ -5,6 +5,7 @@ const itemForm = document.getElementById('item-form');
 const itemInput = document.getElementById('item-input');
 const itemList = document.getElementById('item-list');
 const clearButton = document.getElementById('clear');
+const itemFilter = document.getElementById('filter');
 
 // Event functions
 function addItem(e) {
@@ -32,8 +33,10 @@ function addItem(e) {
     // Append list item to the item list
     itemList.appendChild(li);
 
+    checkUI();
+
     // clear input field
-    itemInput.value = '';
+    itemInput.value = '';    
 }
 
 function createButton(classes) {
@@ -54,15 +57,29 @@ function createIcon(classes) {
 
 function removeItem(e) {
     if (e.target.parentElement.classList.contains('remove-item')) {
-        e.target.parentElement.parentElement.remove();
-    }
+        if (confirm(`Sure you wanna delete ${e.target.parentElement.parentElement.firstChild.textContent} from the list?`)) {
+            e.target.parentElement.parentElement.remove();
+        }        
+    };
+    checkUI();
 }
 
 // I wondered why the console.log would log more often than were li in the list. The children of ul of course also contain whitespace textNodes within the ul tags as well as at least one comment node if I commented out all items in the html. To get rid of this potential issue, it is necessary to have the opening and closing ul tag right next to each other. Otherwise we could potentially target a comment or textNode child that we did not intent to. Will remove this later from the HTML. Will keep it now for building/testing purposes
 function clearItems() {
     while (itemList.firstChild) {
         itemList.removeChild(itemList.firstChild);
-        console.log(itemList);
+    }
+    checkUI();
+}
+
+function checkUI() {
+    const items = itemList.querySelectorAll('li');
+    if (items.length === 0) {
+        clearButton.style.display = 'none';
+        itemFilter.style.display = 'none';
+    } else {
+        clearButton.style.display = 'flex';
+        itemFilter.style.display = 'flex';
     }
 }
 
@@ -71,3 +88,6 @@ function clearItems() {
 itemForm.addEventListener('submit', addItem);
 itemList.addEventListener('click', removeItem);
 clearButton.addEventListener('click', clearItems);
+
+// Check on page load if there are items, otherwise clear the Clear All button and Filter input
+checkUI();
