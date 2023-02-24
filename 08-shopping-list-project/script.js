@@ -31,6 +31,7 @@ function onAddItemSubmit(e) {
     itemInput.value = '';    
 }
 
+
 function addItemToDom(item) {
     // Create list item
     const li = document.createElement('li');
@@ -45,6 +46,25 @@ function addItemToDom(item) {
     // Append list item to the item list
     itemList.appendChild(li);
 }
+
+
+function createButton(classes) {
+    const button = document.createElement('button');
+    button.className = classes;
+
+    // append icon to the button
+    const icon = createIcon('fa-solid fa-xmark');
+    button.appendChild(icon);
+    return button;
+}
+
+
+function createIcon(classes) {
+    const icon = document.createElement('i');
+    icon.className = classes;
+    return icon;
+}
+
 
 function addItemToStorage(item) {
     let itemsFromStorage;
@@ -64,21 +84,22 @@ function addItemToStorage(item) {
     localStorage.setItem('items', JSON.stringify(itemsFromStorage));
 }
 
-function createButton(classes) {
-    const button = document.createElement('button');
-    button.className = classes;
 
-    // append icon to the button
-    const icon = createIcon('fa-solid fa-xmark');
-    button.appendChild(icon);
-    return button;
+function displayItems() {
+    let itemsFromStorage;
+
+    if(localStorage.getItem('items') === null) {
+        // if there's no 'items' key in local storage, set our variable to an empty array
+        itemsFromStorage = [];
+    } else {
+        // else set the variable to an array from the value string
+        itemsFromStorage = JSON.parse(localStorage.getItem('items'));
+    }
+
+    itemsFromStorage.forEach(item => addItemToDom(item));
+    checkUI();
 }
 
-function createIcon(classes) {
-    const icon = document.createElement('i');
-    icon.className = classes;
-    return icon;
-}
 
 function removeItem(e) {
     if (e.target.parentElement.classList.contains('remove-item')) {
@@ -121,12 +142,16 @@ function checkUI() {
     }
 }
 
+function init() {
+    // Event Listeners
+    itemForm.addEventListener('submit', onAddItemSubmit);
+    itemList.addEventListener('click', removeItem);
+    clearButton.addEventListener('click', clearItems);
+    itemFilter.addEventListener('input', filterItems);
+    document.addEventListener('DOMContentLoaded', displayItems);
 
-// Event Listeners
-itemForm.addEventListener('submit', onAddItemSubmit);
-itemList.addEventListener('click', removeItem);
-clearButton.addEventListener('click', clearItems);
-itemFilter.addEventListener('input', filterItems);
+    // Check on page load if there are items, otherwise clear the Clear All button and Filter input
+    checkUI();
+}
 
-// Check on page load if there are items, otherwise clear the Clear All button and Filter input
-checkUI();
+init();
