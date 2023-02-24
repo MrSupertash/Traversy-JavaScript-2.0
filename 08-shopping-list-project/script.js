@@ -104,15 +104,12 @@ function removeItem(e) {
     if (e.target.parentElement.classList.contains('remove-item')) {
         const itemName = e.target.parentElement.parentElement.firstChild.textContent;
         if (confirm(`Sure you wanna delete ${itemName} from the list?`)) {
-            removeItemFromDOM(e.target.parentElement.parentElement);
+            // remove item from DOM
+            e.target.parentElement.parentElement.remove();
             removeItemFromLocalStorage(itemName);
         }        
     };
     checkUI();
-}
-
-function removeItemFromDOM(item) {
-    item.remove();
 }
 
 function removeItemFromLocalStorage(item) {
@@ -125,16 +122,20 @@ function removeItemFromLocalStorage(item) {
         };
     });
 
-    localStorage.setItem('items', JSON.stringify(newStorageItems));
+    // if no items left, clear local storage, otherwise set updated item list
+    if (newStorageItems.length === 0) {
+        localStorage.removeItem('items');
+    } else {
+        localStorage.setItem('items', JSON.stringify(newStorageItems));
+    }
 }
 
-// I wondered why the console.log would log more often than were li in the list. The children of ul of course also contain whitespace textNodes within the ul tags as well as at least one comment node if I commented out all items in the html. To get rid of this potential issue, it is necessary to have the opening and closing ul tag right next to each other. Otherwise we could potentially target a comment or textNode child that we did not intent to. Will remove this later from the HTML. Will keep it now for building/testing purposes
 function clearItems() {
     while (itemList.firstChild) {
         itemList.removeChild(itemList.firstChild);
     }
 
-    localStorage.clear();
+    localStorage.removeItem('items');
     checkUI();
 }
 
@@ -164,6 +165,7 @@ function checkUI() {
 
 // initialize app
 function init() {
+
     // Event Listeners
     itemForm.addEventListener('submit', onAddItemSubmit);
     itemList.addEventListener('click', removeItem);
