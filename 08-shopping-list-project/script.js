@@ -8,7 +8,7 @@ const clearButton = document.getElementById('clear');
 const itemFilter = document.getElementById('filter');
 
 // Event functions
-function addItem(e) {
+function onAddItemSubmit(e) {
     e.preventDefault();
 
     const newItem = itemInput.value;
@@ -19,12 +19,24 @@ function addItem(e) {
         return;
     }
 
+    // create item DOM element
+    addItemToDom(newItem);
+
+    // add item to local storage
+    addItemToStorage(newItem);
+
+    checkUI();
+
+    // clear input field
+    itemInput.value = '';    
+}
+
+function addItemToDom(item) {
     // Create list item
     const li = document.createElement('li');
-    li.appendChild(document.createTextNode(newItem));
+    li.appendChild(document.createTextNode(item));
 
-    // Create Button with icon
-    
+    // Create Button with icon    
     const button = createButton('remove-item btn-link text-red');    
     
     // Append button to the list item
@@ -32,11 +44,24 @@ function addItem(e) {
 
     // Append list item to the item list
     itemList.appendChild(li);
+}
 
-    checkUI();
+function addItemToStorage(item) {
+    let itemsFromStorage;
 
-    // clear input field
-    itemInput.value = '';    
+    if(localStorage.getItem('items') === null) {
+        // if there's no 'items' key in local storage, set our variable to an empty array
+        itemsFromStorage = [];
+    } else {
+        // else set the variable to an array from the value string
+        itemsFromStorage = JSON.parse(localStorage.getItem('items'));
+    }
+
+    // add new item to array
+    itemsFromStorage.push(item);
+
+    // convert to JSON string and set to local storage
+    localStorage.setItem('items', JSON.stringify(itemsFromStorage));
 }
 
 function createButton(classes) {
@@ -76,21 +101,13 @@ function filterItems(e) {
     const items = itemList.querySelectorAll('li');
     const text = e.target.value.toLowerCase();
     
-    // check if there is something in the filter input
-    // actually we don't need to do that because otherwise the eventlistener wouldn't have fired. It even fires if we delete the last remaining character! Will delete these with the next commit.
-    // if (text) {
-        // we already know that there are items, because otherwise the filter input element is hidden
-        // if any of the items contains the substring from the input field, show it, or if not, don't show it
-        items.forEach(item => {
-            if (!item.textContent.toLowerCase().includes(text)) {
-                item.style.display = 'none';
-            } else {
-                item.style.display = 'flex';
-            }
-        })
-    // } else {
-    //     items.forEach(item => item.style.display = 'flex');
-    // }
+    items.forEach(item => {
+        if (!item.textContent.toLowerCase().includes(text)) {
+            item.style.display = 'none';
+        } else {
+            item.style.display = 'flex';
+        }
+    })
 }
 
 function checkUI() {
@@ -106,7 +123,7 @@ function checkUI() {
 
 
 // Event Listeners
-itemForm.addEventListener('submit', addItem);
+itemForm.addEventListener('submit', onAddItemSubmit);
 itemList.addEventListener('click', removeItem);
 clearButton.addEventListener('click', clearItems);
 itemFilter.addEventListener('input', filterItems);
