@@ -66,16 +66,16 @@ function createIcon(classes) {
 }
 
 
-function addItemToStorage(item) {
-    let itemsFromStorage;
+function displayItems() {
+    const itemsFromStorage = getItemsFromStorage();
+    itemsFromStorage.forEach(item => addItemToDom(item));
+    
+    checkUI();
+}
 
-    if(localStorage.getItem('items') === null) {
-        // if there's no 'items' key in local storage, set our variable to an empty array
-        itemsFromStorage = [];
-    } else {
-        // else set the variable to an array from the value string
-        itemsFromStorage = JSON.parse(localStorage.getItem('items'));
-    }
+
+function addItemToStorage(item) {
+    const itemsFromStorage = getItemsFromStorage();
 
     // add new item to array
     itemsFromStorage.push(item);
@@ -84,12 +84,6 @@ function addItemToStorage(item) {
     localStorage.setItem('items', JSON.stringify(itemsFromStorage));
 }
 
-function displayItems() {
-    const itemsFromStorage = getItemsFromStorage();
-    itemsFromStorage.forEach(item => addItemToDom(item));
-    
-    checkUI();
-}
 
 function getItemsFromStorage() {
     let itemsFromStorage;
