@@ -35,6 +35,11 @@ function onAddItemSubmit(e) {
         itemToEdit.remove();
 
         isEditMode = 'false';
+    } else {
+        if (checkIfItemExists(newItem)) {
+            alert('That item is already on the list!');
+            return;
+        }
     }
 
     // create item DOM element
@@ -126,6 +131,14 @@ function onClickItem(e) {
     } else if (e.target.tagName === 'LI') {
         setItemToEdit(e.target);
     }
+}
+
+function checkIfItemExists(item) {
+    let itemsFromStorage = getItemsFromStorage();
+    const smallItemsFromStorage = itemsFromStorage.map(storageItem => storageItem.toLowerCase());
+
+    // if storage includes item, it will return true otherwise false
+    return smallItemsFromStorage.includes(item.toLowerCase());
 }
 
 function setItemToEdit(item) {
