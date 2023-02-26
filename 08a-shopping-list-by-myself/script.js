@@ -34,7 +34,6 @@ function addItemToStorage(item) {
 
     storageItems.push(item);
     localStorage.setItem('items', JSON.stringify(storageItems));
-    console.log(localStorage.getItem('items'));
 }
 
 function addItemToDOM(item) {
