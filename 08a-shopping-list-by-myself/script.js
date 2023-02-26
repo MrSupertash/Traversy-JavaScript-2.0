@@ -9,6 +9,8 @@ const clearBtn = document.getElementById('clear');
 
 // Functions
 
+
+// Add an item
 function addItem(e) {
     const text = itemInput.value;
     const li = document.createElement('li');
@@ -49,6 +51,30 @@ function onSubmitItem(e) {
     }
 }
 
+// Remove an item
+
+function onClickItem(e) {
+    const li = itemList.querySelectorAll('.remove-item');
+
+
+    // isEditMode
+
+    // remove item
+    if (e.target.tagName === 'I') {
+        e.target.parentElement.parentElement.remove();
+    }
+}
+
+// remove all items
+function clearAll(e) {
+    while (itemList.firstChild) {
+        itemList.firstChild.remove();
+    }
+}
+
+
 // Event Listeners
 // itemInput.addEventListener('input', addItem);
 itemForm.addEventListener('submit', onSubmitItem);
+itemList.addEventListener('click', onClickItem);
+clearBtn.addEventListener('click', clearAll)
