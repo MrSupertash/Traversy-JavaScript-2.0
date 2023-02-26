@@ -12,10 +12,35 @@ const itemFilter = document.getElementById('filter');
 
 
 // Add an item
-function addItem(e) {
+
+function onSubmitItem(e) {
+    e.preventDefault();
+    const newItem = itemInput.value;
+
+    if (newItem !== '') {
+        addItemToDOM(newItem);
+        itemInput.value = '';
+        addItemToStorage(newItem);
+    }
+}
+
+function addItemToStorage(item) {
+    // localStorage.removeItem('items');
+    let storageItems = JSON.parse(localStorage.getItem('items'));
+
+    if (storageItems === null) {
+        storageItems = [];
+    }
+
+    storageItems.push(item);
+    localStorage.setItem('items', JSON.stringify(storageItems));
+    console.log(localStorage.getItem('items'));
+}
+
+function addItemToDOM(item) {
     const text = itemInput.value;
     const li = document.createElement('li');
-    const itemText = document.createTextNode(text);
+    const itemText = document.createTextNode(item);
 
     const button = createButton();
 
@@ -45,14 +70,7 @@ function createIcon() {
 }
 
 
-function onSubmitItem(e) {
-    e.preventDefault();
 
-    if (itemInput.value !== '') {
-        addItem(itemInput.value);
-        itemInput.value = '';
-    }
-}
 
 // Remove an item
 
@@ -66,8 +84,6 @@ function onClickItem(e) {
     if (e.target.tagName === 'I') {
         e.target.parentElement.parentElement.remove();
     }
-    console.log(itemList);
-    console.log(itemList.firstElementChild);
 
     checkUI();
 }
