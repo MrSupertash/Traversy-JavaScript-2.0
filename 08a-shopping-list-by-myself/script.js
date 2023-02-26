@@ -25,7 +25,6 @@ function onSubmitItem(e) {
 }
 
 function addItemToStorage(item) {
-    // localStorage.removeItem('items');
     let storageItems = JSON.parse(localStorage.getItem('items'));
 
     if (storageItems === null) {
@@ -34,6 +33,16 @@ function addItemToStorage(item) {
 
     storageItems.push(item);
     localStorage.setItem('items', JSON.stringify(storageItems));
+}
+
+function getItemsFromStorage() {
+    let storageItems = JSON.parse(localStorage.getItem('items'));
+
+    if (storageItems !== null) {
+        storageItems.forEach(storageItem => addItemToDOM(storageItem));
+    }
+
+    checkUI();
 }
 
 function addItemToDOM(item) {
@@ -67,8 +76,6 @@ function createIcon() {
 
     return icon;
 }
-
-
 
 
 // Remove an item
@@ -124,13 +131,14 @@ function filterItems(e) {
 }
 
 
+function init() {
+    // initialize event listeners
+    itemForm.addEventListener('submit', onSubmitItem);
+    itemList.addEventListener('click', onClickItem);
+    clearBtn.addEventListener('click', clearAll);
+    itemFilter.addEventListener('input', filterItems);
 
-// Event Listeners
-// itemInput.addEventListener('input', addItem);
-itemForm.addEventListener('submit', onSubmitItem);
-itemList.addEventListener('click', onClickItem);
-clearBtn.addEventListener('click', clearAll);
-itemFilter.addEventListener('input', filterItems);
+    getItemsFromStorage();
+}
 
-
-checkUI();
+init();
