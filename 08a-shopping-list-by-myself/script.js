@@ -92,10 +92,30 @@ function checkUI() {
     }
 }
 
+
+// filter items
+function filterItems(e) {
+    const filterText = e.target.value.toLowerCase();
+    const items = itemList.querySelectorAll('li');    
+
+    items.forEach(item => {
+        const itemText = item.firstChild.textContent.toLowerCase();
+        if (!itemText.includes(filterText)) {
+            item.style.display = 'none';
+        } else {
+            item.style.display = 'flex';
+        }
+    })
+}
+
+
+
 // Event Listeners
 // itemInput.addEventListener('input', addItem);
 itemForm.addEventListener('submit', onSubmitItem);
 itemList.addEventListener('click', onClickItem);
 clearBtn.addEventListener('click', clearAll);
+itemFilter.addEventListener('input', filterItems);
+
 
 checkUI();
