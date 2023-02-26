@@ -89,9 +89,23 @@ function onClickItem(e) {
     // remove item
     if (e.target.tagName === 'I') {
         e.target.parentElement.parentElement.remove();
+        console.log(e.target.parentElement.parentElement.firstChild.textContent)
+        removeItemFromStorage(e.target.parentElement.parentElement.firstChild.textContent);
     }
 
     checkUI();
+}
+
+function removeItemFromStorage(item) {
+    let storageItems = JSON.parse(localStorage.getItem('items'));
+    
+    
+        const newStorageItems = storageItems.filter(storageItem => storageItem !== item);
+        localStorage.removeItem('items');
+    
+        if (newStorageItems.length !== 0) {
+            localStorage.setItem('items', JSON.stringify(newStorageItems));
+        }    
 }
 
 
@@ -100,6 +114,8 @@ function clearAll(e) {
     while (itemList.firstChild) {
         itemList.firstChild.remove();
     }
+
+    localStorage.removeItem('items');
 
     checkUI();
 }
