@@ -7,6 +7,8 @@ const itemInput = document.getElementById('item-input');
 const itemList = document.getElementById('item-list');
 const clearBtn = document.getElementById('clear');
 const itemFilter = document.getElementById('filter');
+const formButton = itemForm.querySelector('button');
+let isEditMode = false;
 
 // Functions
 
@@ -85,15 +87,30 @@ function onClickItem(e) {
 
 
     // isEditMode
-
+    if (e.target.tagName === 'LI') {
+        e.target.classList.add('edit-mode');        
+        setItemToEdit(e.target.firstChild.textContent);
+        
+    };
+    
     // remove item
     if (e.target.tagName === 'I') {
         e.target.parentElement.parentElement.remove();
         console.log(e.target.parentElement.parentElement.firstChild.textContent)
         removeItemFromStorage(e.target.parentElement.parentElement.firstChild.textContent);
     }
-
+    
     checkUI();
+}
+
+function setItemToEdit(item) {
+    isEditMode = true;    
+    itemList.querySelectorAll('li').forEach(i => i.classList.remove('edit-mode'));
+    document.getElementById('item-input').value = item;
+    document.getElementById('item-input').focus();
+    
+    formButton.innerHTML = '<i class="fa-solid fa-pen"></i> Update Item';
+    formButton.style.backgroundColor = 'green';
 }
 
 function removeItemFromStorage(item) {
