@@ -9,7 +9,9 @@ function changeText() {
 }
 
 
-// for some reason the return of setTimeout() varies. it seems to be an integer, though. Can still work with it if stored in a variable!
+// For the below timerID variable. Here from the MDN about the return value:
+// The returned timeoutID is a positive integer value which identifies the timer created by the call to setTimeout(). This value can be passed to clearTimeout() to cancel the timeout.
+// It is guaranteed that a timeoutID value will never be reused by a subsequent call to setTimeout() or setInterval() on the same object (a window or a worker). However, different objects use separate pools of IDs.
 const timerId = setTimeout(changeText, 3000); // this executes
 
 document.querySelector('#cancel').addEventListener('click', () => {
