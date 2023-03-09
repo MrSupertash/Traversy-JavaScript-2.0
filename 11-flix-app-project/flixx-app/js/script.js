@@ -29,7 +29,6 @@ async function displayPopularMovies() {
                 alt="${movie.title}"
               />`
             }
-
             
           </a>
           <div class="card-body">
@@ -85,6 +84,84 @@ async function displayPopularShows() {
     })
     console.log(results);
 }
+
+
+// Display Movie Details
+async function displayMovieDetails() {
+    // the following will return the query string, everything after and including the question mark "?" in the URL. We passed that in in the href of the individual cards. We split here at the equal sign, to get the actual value of "?id=4353324" at index 1
+    const movieId = window.location.search.split('=')[1];
+
+    const movie = await fetchAPIData(`movie/${movieId}`);
+    
+
+    
+
+
+    const div = document.createElement('div');
+    div.innerHTML = `
+    <div class="details-top">
+    <div>
+    ${  // if movie.poster_path is not null/falsy, show image, otherwise show dummy No Image image.
+        movie.poster_path
+        ? `<img
+        src="https://image.tmdb.org/t/p/w500${movie.poster_path}"
+        class="card-img-top"
+        alt="${movie.title}"
+      />`
+        : `<img
+        src="images/no-image.jpg"
+        class="card-img-top"
+        alt="${movie.title}"
+      />`
+    }
+    </div>
+    <div>
+      <h2>${movie.title}</h2>
+      <p>
+        <i class="fas fa-star text-primary"></i> ${movie.vote_average.toFixed(1)}
+      </p>
+      <p class="text-muted">Release Date: ${movie.release_date}</p>
+      <p>${movie.overview}
+      </p>
+      <h5>Genres</h5>
+      <ul class="list-group">
+      ${movie.genres.map(genre => `<li>${genre.name}</li>`).join('')}
+      </ul>
+      <a href="${movie.homepage}" target="_blank" class="btn">Visit Movie Homepage</a>
+    </div>
+  </div>
+  <div class="details-bottom">
+    <h2>Movie Info</h2>
+    <ul>
+      <li><span class="text-secondary">Budget:</span> ${movie.budget ? movie.budget.toLocaleString('en-US') : 'N/A'}</li>
+      <li><span class="text-secondary">Revenue:</span> ${movie.revenue ? movie.revenue.toLocaleString('en-US') : 'N/A'}</li>
+      <li><span class="text-secondary">Runtime:</span> ${movie.runtime ? movie.runtime + ' minutes' : 'N/A'}</li>
+      <li><span class="text-secondary">Status:</span> ${movie.status ? movie.status : 'N/A'}</li>
+    </ul>
+    <h4>Production Companies</h4>
+    <div class="list-group companies">
+    ${movie.production_companies.map(company => `<span>${company.name}</span>`).join(', ')}
+    </div>
+  </div>
+    `
+    document.querySelector('#movie-details').appendChild(div);
+
+    // get list of genres. This here was my solution. The above solution is how Brad injected the code right into the ul element
+    // const movieGenres = movie.genres;
+    // movieGenres.forEach(genre => {
+    //     const li = document.createElement('li');
+    //     li.textContent = `${genre.name}`;
+    //     document.querySelector('.list-group').appendChild(li);
+    // });
+
+    // get list of production companies Same here, this was my first solution. I did the above one myself after the genre example
+    // const prodCompanies = movie.production_companies;
+    // const allCompanyNames = prodCompanies.map(company => company.name).join(', ');
+    // const companiesText = document.createTextNode(allCompanyNames);
+    // document.querySelector('.companies').appendChild(companiesText);
+
+}
+
 
 // Fetch data from TMDB API
 async function fetchAPIData(endpoint) {
@@ -144,6 +221,7 @@ function init() {
             console.log('Shows');
             break;
         case '/movie-details.html':
+            displayMovieDetails();
             console.log('Movie Details');
             break;
         case '/tv-details.html':
