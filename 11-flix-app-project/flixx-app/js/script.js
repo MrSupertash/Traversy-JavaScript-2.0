@@ -6,7 +6,7 @@ const global = {
     currentPage: window.location.pathname,
 };
 
-
+// Display 20 most popular movies
 async function displayPopularMovies() {
     // the response object has the data in a "results" array. so here we are destructuring it
     const { results } = await fetchAPIData('movie/popular');
@@ -46,21 +46,72 @@ async function displayPopularMovies() {
     console.log(results);
 }
 
+// Display 20 most popular TV shows
+async function displayPopularShows() {
+    // the response object has the data in a "results" array. so here we are destructuring it
+    const { results } = await fetchAPIData('tv/popular');
+
+    results.forEach(show => {
+        const div = document.createElement('div');
+        div.classList.add('card');
+        div.innerHTML = `
+        <a href="tv-details.html?id=${show.id}">
+            ${  // if movie.poster_path is not null/falsy, show image, otherwise show dummy No Image image.
+                show.poster_path
+                ? `<img
+                src="https://image.tmdb.org/t/p/w500${show.poster_path}"
+                class="card-img-top"
+                alt="${show.name}"
+              />`
+                : `<img
+                src="images/no-image.jpg"
+                class="card-img-top"
+                alt="${show.name}"
+              />`
+            }
+
+            
+          </a>
+          <div class="card-body">
+            <h5 class="card-title">${show.name}</h5>
+            <p class="card-text">
+              <small class="text-muted">First aired: ${show.first_air_date}</small>
+            </p>
+          </div>
+        `
+    
+        document.getElementById('popular-shows').appendChild(div);
+
+    })
+    console.log(results);
+}
+
 // Fetch data from TMDB API
 async function fetchAPIData(endpoint) {
-    // DO NOT push the key to GitHUB, delete the key beforehand! Investigate env files and how to gitignore it or something
+    // DO NOT push the key to GitHUB, delete the key beforehand! Investigate env files and how to gitignore it or something. We should store the key and make requests from a server.
     const API_KEY = '';    
     const API_URL = 'https://api.themoviedb.org/3/';
+
+    showSpinner();
 
     const response = await fetch(`${API_URL}${endpoint}?api_key=${API_KEY}&language=en-US`);
 
     const data = await response.json();
 
+    hideSpinner();
+
     return data;
 }
 
 
-// console.log(global.currentPage);
+//Toggle spinner
+function showSpinner() {
+    document.querySelector('.spinner').classList.add('show');
+};
+
+function hideSpinner() {
+    document.querySelector('.spinner').classList.remove('show');
+}
 
 // Highlight active Link
 function highlightActiveLink() {
@@ -89,6 +140,7 @@ function init() {
             console.log('Home');
             break;
         case '/shows.html':
+            displayPopularShows();
             console.log('Shows');
             break;
         case '/movie-details.html':
