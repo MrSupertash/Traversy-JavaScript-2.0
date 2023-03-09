@@ -6,6 +6,60 @@ const global = {
     currentPage: window.location.pathname,
 };
 
+
+async function displayPopularMovies() {
+    // the response object has the data in a "results" array. so here we are destructuring it
+    const { results } = await fetchAPIData('movie/popular');
+
+    results.forEach(movie => {
+        const div = document.createElement('div');
+        div.classList.add('card');
+        div.innerHTML = `
+        <a href="movie-details.html?id=${movie.id}">
+            ${  // if movie.poster_path is not null/falsy, show image, otherwise show dummy No Image image.
+                movie.poster_path
+                ? `<img
+                src="https://image.tmdb.org/t/p/w500${movie.poster_path}"
+                class="card-img-top"
+                alt="${movie.title}"
+              />`
+                : `<img
+                src="images/no-image.jpg"
+                class="card-img-top"
+                alt="${movie.title}"
+              />`
+            }
+
+            
+          </a>
+          <div class="card-body">
+            <h5 class="card-title">${movie.title}</h5>
+            <p class="card-text">
+              <small class="text-muted">Release: ${movie.release_date}</small>
+            </p>
+          </div>
+        `
+    
+        document.getElementById('popular-movies').appendChild(div);
+
+    })
+    console.log(results);
+}
+
+// Fetch data from TMDB API
+async function fetchAPIData(endpoint) {
+    // DO NOT push the key to GitHUB, delete the key beforehand! Investigate env files and how to gitignore it or something
+    const API_KEY = '';    
+    const API_URL = 'https://api.themoviedb.org/3/';
+
+    const response = await fetch(`${API_URL}${endpoint}?api_key=${API_KEY}&language=en-US`);
+
+    const data = await response.json();
+
+    return data;
+}
+
+
 // console.log(global.currentPage);
 
 // Highlight active Link
@@ -31,6 +85,7 @@ function init() {
     switch (global.currentPage) {
         case '/':
         case '/index.html':
+            displayPopularMovies();
             console.log('Home');
             break;
         case '/shows.html':
@@ -51,4 +106,6 @@ function init() {
 }
 
 // calling init upon DOMContentLoaded
-document.addEventListener('DOMContentLoaded', init)
+document.addEventListener('DOMContentLoaded', init);
+console.error('Hide API Key before every gitHub push!');
+alert('Hide API Key before every gitHub push!')
