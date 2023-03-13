@@ -9,6 +9,7 @@ const global = {
       type: '',
       page: 1,
       totalPages: 1,
+      totalResults: 0,
     },
 
     // DO NOT push the key to GitHUB, delete the key beforehand! Investigate env files and how to gitignore it or something. We should store the key and make requests from a server.
@@ -273,7 +274,11 @@ async function search() {
 
   if (global.search.term !== '' && global.search.term !== null) {
     // destructuring here again to get the results property and store in variable results, also tota_pages and current page
-    const { results, total_pages, page } = await searchAPIData();
+    const { results, total_pages, page, total_results } = await searchAPIData();
+
+    global.search.page = page;
+    global.search.totalPages = total_pages;
+    global.search.totalResults = total_results;
 
     if (results.length === 0) {
       showAlert('No matching titles found');
@@ -293,6 +298,11 @@ async function search() {
 }
 
 function displaySearchResults(results) {
+  // Clear previous results
+  document.getElementById('search-results').innerHTML = '';
+  document.getElementById('search-results-heading').innerHTML = '';
+  document.getElementById('pagination').innerHTML = '';
+
   results.forEach(result => {
     const div = document.createElement('div');
     div.classList.add('card');
@@ -321,13 +331,57 @@ function displaySearchResults(results) {
       </div>
     `
 
+    // this needs to be modified to check on what page we're on, so it shows 1-20 of 123 on page 1 and 21-40 on page 2 and so on.
+    document.getElementById('search-results-heading').innerHTML = `
+      <h2>${global.search.page === 1 ? results.length : results.length + 1} ${global.search.page === global.search.totalPages ? `- ${global.search.totalResults}` : `- ${global.search.page + 1 * results.length}`} of ${global.search.totalResults} Results for ${global.search.term}</h2>`
     document.getElementById('search-results').appendChild(div);
 
-})
+  });
+
+  displayPagination();
 }
 
+// Create and display pagination for Search
+function displayPagination() {
+  const div = document.createElement('div');
+  div.classList.add('pagination');
+  // maybe there's a better solution than the below ternary. We can probably toggle the prev/next buttons with a class instead!
+  div.innerHTML = `
+    
+        <button class="btn btn-primary" id="prev">Prev</button>
+        <button class="btn btn-primary" id="next">Next</button>
+        <div class="page-counter">Page ${global.search.page} of ${global.search.totalPages}    
+  `
 
+  document.getElementById('pagination').appendChild(div);
 
+  // Remove prev button if on first page
+  if (global.search.page === 1) {
+    document.getElementById('prev').remove();
+  }
+
+  // Remove next button if on last page
+  if (global.search.page === global.search.totalPages) {
+    document.getElementById('next').remove();
+  }
+
+  if (document.querySelector('#pagination #next')) {
+    document.querySelector('#next').addEventListener('click', async () => {
+    global.search.page++;
+    const { results, total_pages } = await searchAPIData();
+    displaySearchResults(results);
+    });
+  }
+
+  if (document.querySelector('#pagination #prev')) {
+    document.querySelector('#prev').addEventListener('click', async () => {
+    global.search.page--;
+    const { results, total_pages } = await searchAPIData();
+    displaySearchResults(results);
+    });
+  }
+
+}
 
 
 // Display Slider Movies
@@ -401,7 +455,7 @@ async function searchAPIData() {
 
   showSpinner();
 
-  const response = await fetch(`${API_URL}search/${global.search.type}?api_key=${API_KEY}&language=en-US&query=${global.search.term}`);
+  const response = await fetch(`${API_URL}search/${global.search.type}?api_key=${API_KEY}&language=en-US&query=${global.search.term}&page=${global.search.page}`);
 
   const data = await response.json();
 
